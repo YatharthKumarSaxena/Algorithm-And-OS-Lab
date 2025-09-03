@@ -1,13 +1,11 @@
-import java.awt.Point;
 
 public class GridDFS {
     static int ROWS, COLS;
     static int[][] grid;
     static boolean[][] visited;
-    static boolean pathFound = false;
 
-    static Point[] bestPath;
-    static Point[] currentPath;
+    static MyPoint[] bestPath;
+    static MyPoint[] currentPath;
     static int bestProfit = Integer.MIN_VALUE;
     static int bestMoves = Integer.MAX_VALUE;
     static int bestLength = 0;
@@ -21,15 +19,14 @@ public class GridDFS {
         COLS = cols;
         grid = g;
         visited = new boolean[ROWS][COLS];
-        bestPath = new Point[ROWS * COLS];
-        currentPath = new Point[ROWS * COLS];
+        bestPath = new MyPoint[ROWS * COLS];
+        currentPath = new MyPoint[ROWS * COLS];
     }
 
-    static boolean goalReached = false; // ✅ New flag
+    static boolean goalReached = false; // New flag
 
     public static void runDFS() {
-        pathFound = false;
-        goalReached = false; // ✅ Reset
+        goalReached = false; // Reset
         bestProfit = Integer.MIN_VALUE;
         bestMoves = Integer.MAX_VALUE;
         bestLength = 0;
@@ -46,17 +43,16 @@ public class GridDFS {
         profit += grid[x][y];
         moves++;
         visited[x][y] = true;
-        currentPath[pathLen] = new Point(x, y);
+        currentPath[pathLen] = new MyPoint(x, y);
         pathLen++;
 
         if (x == 0 && y == 0) {
-            pathFound = true;
             goalReached = true;
 
             boolean allNegative = (bestProfit <= 0 && profit <= 0);
 
             if (allNegative) {
-                // ✅ Prefer path with minimum loss (i.e. higher negative profit)
+                // Prefer path with minimum loss (i.e. higher negative profit)
                 if (profit > bestProfit || (profit == bestProfit && moves < bestMoves)) {
                     bestProfit = profit;
                     bestMoves = moves;
@@ -65,7 +61,7 @@ public class GridDFS {
                         bestPath[i] = currentPath[i];
                 }
             } else {
-                // ✅ Normal case: maximize profit/move ratio
+                // Normal case: maximize profit/move ratio
                 double bestRatio = (bestMoves == Integer.MAX_VALUE) ? -1 : (double) bestProfit / bestMoves;
                 double currentRatio = (double) profit / moves;
 
@@ -116,7 +112,7 @@ public class GridDFS {
         System.out.println();
     }
 
-    public static Point getPathStep(int step) {
+    public static MyPoint getPathStep(int step) {
         if (step >= 0 && step < bestLength) {
             return bestPath[step];
         }

@@ -22,7 +22,7 @@ public class Main {
         GridDFS.init(rows, cols, grid);
         GridDFS.runDFS();
 
-        if (!GridDFS.pathFound || GridDFS.bestLength == 0) {
+        if (!GridDFS.goalReached || GridDFS.bestLength == 0) {
             System.out.println("❌ No path exists from Goal to Start. Grid is fully blocked or unreachable.");
         } else {
             GridDFS.printBestPath();
@@ -51,7 +51,7 @@ public class Main {
         // Animate
         for (int step = 0; step < GridDFS.bestLength; step++) {
             panel.setStep(step);
-            Thread.sleep(700);
+            Thread.sleep(1000);
         }
     }
 }

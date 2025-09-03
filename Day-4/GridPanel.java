@@ -10,44 +10,58 @@ public class GridPanel extends JPanel {
         repaint();
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+@Override
+public void paintComponent(Graphics g) {
+    super.paintComponent(g);
 
-        for (int i = 0; i < GridDFS.ROWS; i++) {
-            for (int j = 0; j < GridDFS.COLS; j++) {
-                int val = GridDFS.grid[i][j];
+    for (int i = 0; i < GridDFS.ROWS; i++) {
+        for (int j = 0; j < GridDFS.COLS; j++) {
+            int val = GridDFS.grid[i][j];
 
-                if (val == 9999) {
-                    g.setColor(Color.BLACK);
-                    g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
-                } else if (val > 0) {
-                    g.setColor(Color.GREEN);
-                    g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
-                } else if (val < 0) {
-                    g.setColor(Color.RED);
-                    g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
-                } else {
-                    g.setColor(Color.LIGHT_GRAY);
-                    g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
-                }
+            if (val == 9999) {
+                g.setColor(Color.BLACK); // blocker
+            } else if (val > 0) {
+                g.setColor(Color.GREEN); // gift
+            } else if (val < 0) {
+                g.setColor(Color.RED); // pothole
+            } else {
+                g.setColor(Color.LIGHT_GRAY); // normal cell
+            }
+            g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
 
+            // Highlight path up to current step
+            if (isInCurrentPath(i, j)) {
+                g.setColor(new Color(255, 255, 0, 150)); // transparent yellow
+                g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+            }
+
+            g.setColor(Color.BLACK);
+            g.drawRect(j * cellSize, i * cellSize, cellSize, cellSize);
+
+            if (val != 9999 && val != 0) {
                 g.setColor(Color.BLACK);
-                g.drawRect(j * cellSize, i * cellSize, cellSize, cellSize);
-
-                if (val != 9999 && val != 0) {
-                    g.setColor(Color.BLACK);
-                    g.drawString(String.valueOf(val), j * cellSize + 20, i * cellSize + 30);
-                }
+                g.drawString(String.valueOf(val), j * cellSize + 20, i * cellSize + 30);
             }
         }
-
-        // GridPanel.java ke andar
-        if (step < GridDFS.bestLength) {
-            java.awt.Point p = GridDFS.getPathStep(step); // 👈 force java.awt.Point
-            g.setColor(Color.BLUE);
-            g.fillOval(p.y * cellSize + 15, p.x * cellSize + 15, 30, 30);
-        }
-
     }
+
+    // Current agent position (blue circle)
+    if (step < GridDFS.bestLength) {
+        MyPoint p = GridDFS.getPathStep(step);
+        g.setColor(Color.BLUE);
+        g.fillOval(p.y * cellSize + 15, p.x * cellSize + 15, 30, 30);
+    }
+}
+
+// ✅ Helper method (sirf current step tak ke path ko check karega)
+private boolean isInCurrentPath(int i, int j) {
+    for (int k = 0; k <= step && k < GridDFS.bestLength; k++) {
+        MyPoint p = GridDFS.bestPath[k];
+        if (p.x == i && p.y == j) {
+            return true;
+        }
+    }
+    return false;
+}
+
 }
