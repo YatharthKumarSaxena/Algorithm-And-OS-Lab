@@ -12,8 +12,10 @@ void pauseMS(int ms) {
 int main() {
     cout << "\033[1mBold Text\033[0m\n";
     pauseMS(1000);
-    cout << "\033[2mDim Text\033[0m\n";
+    cout << "\033[2J\033[H";   // clear screen
+    cout << "Dim Text\n";
     pauseMS(1000);
+    cout << "\033[2J\033[H";   // clear screen
     cout << "\033[38;5;39mRed Text\033[0m\n";
     pauseMS(1000);
     cout << "\033[2J\033[H";   // clear screen
