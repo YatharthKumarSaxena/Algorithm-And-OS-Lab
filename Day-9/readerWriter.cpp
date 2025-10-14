@@ -60,23 +60,23 @@ public:
     void operator()() {
         while (true) {
             int new_value;
+            
             {
-                lock_guard<mutex> lock(io_mutex);
-                cout << ">>> Writer " << id << ", enter new value: ";
-            }
+                lock_guard<mutex> io_lock(io_mutex);
+                cout << endl << ">>> Writer " << id << ", enter new value: ";
+                cin >> new_value;
+            } 
 
-            unique_lock<mutex> lock(resource_mutex, defer_lock);
-
-            cin >> new_value;
-
-            lock.lock();
-            shared_data = new_value;
             {
-                lock_guard<mutex> lock(io_mutex);
-                cout << ">>> Writer " << id << " wrote data: " << shared_data << " <<<" << endl;
+                lock_guard<mutex> resource_lock(resource_mutex);
+                shared_data = new_value;
+
+                {
+                    lock_guard<mutex> io_lock(io_mutex);
+                    cout << ">>> Writer " << id << " wrote data: " << shared_data << " <<<" << endl;
+                }
+                this_thread::sleep_for(chrono::milliseconds(rng() % 800 + 500));
             }
-            this_thread::sleep_for(chrono::milliseconds(rng() % 800 + 500));
-            lock.unlock();
 
             this_thread::sleep_for(chrono::milliseconds(rng() % 1500 + 1000));
         }
